@@ -56,6 +56,12 @@
                 - 소스 : DVWA 보안 그룹
                 - 설명 : DVWA 보안 그룹에만 트래픽을 전달하도록 하여 보안성을 높임
 
+---
+---
+![](https://github.com/user-attachments/assets/f6c362a4-4c6f-455c-a8e8-62b9dc4d7c82)
+> 추가로 Route 53에서 레코드를 생성하여 해당 레코드로도 DVWA 접속이 가능하게 설정 가능
+---
+---
 ## DVWA 인스턴스 생성
 
 - 이름 : DVWA
@@ -133,4 +139,14 @@ sudo chmod -R 777 /var/www/html/DVWA/config
 sudo systemctl restart httpd # Apache를 재시작하여 변경 사항을 반영
 ```
 
-위 설정을 모두 하고 웹 브라우저에서 http://<ALB 주소>로 DVWA에 접속하여 설정 페이지(/setup.php)로 이동 후 Create / Reset Database 버튼을 클릭하여 DVWA 데이터베이스를 초기화
+위 설정을 모두 하고 웹 브라우저에서 http://<ALB 주소> 또는 레코드로 DVWA에 접속
+
+![ALB 주소](https://github.com/user-attachments/assets/38ee6424-0ac3-4541-aace-3ee80fa97b31)
+
+---
+
+![레코드](https://github.com/user-attachments/assets/7f00ff98-6f61-4aad-b63f-d2aabb02dcb2)
+
+설정 페이지(/setup.php)로 이동 후 Create / Reset Database 버튼을 클릭하여 DVWA 데이터베이스를 초기화
+
+![](https://github.com/user-attachments/assets/10070653-9cd9-4e70-8b92-2a2f966df99a)
