@@ -133,4 +133,4 @@ sudo chmod -R 777 /var/www/html/DVWA/config
 sudo systemctl restart httpd # Apache를 재시작하여 변경 사항을 반영
 ```
 
-위 설정을 모두 하고 웹 브라우저에서 http://<퍼블릭 IP 또는 ALB 주소>/DVWA로 DVWA에 접속하여 설정 페이지(/setup.php)로 이동 후 Create / Reset Database 버튼을 클릭하여 DVWA 데이터베이스를 초기화
+위 설정을 모두 하고 웹 브라우저에서 http://<ALB 주소>로 DVWA에 접속하여 설정 페이지(/setup.php)로 이동 후 Create / Reset Database 버튼을 클릭하여 DVWA 데이터베이스를 초기화
