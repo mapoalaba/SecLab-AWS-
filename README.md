@@ -9,6 +9,7 @@
 - 보안 그룹 생성
 - 로드 밸런서 생성
 - 인스턴스 생성 및 설정
+- WebACL 생성
 
 ### VPC 생성
 
@@ -189,12 +190,10 @@ sudo yum install -y curl wget
 ```
 
 ALB 인바운드 규칙에 Attacker 퍼블릭 ip 추가
+![](https://github.com/user-attachments/assets/251f581f-d7e8-4ba1-8ef3-c6d24bcd12b9)
 
-IAM 사용자 생성
-
-AmazonEC2FullAccess 권한 추가
-
-액세스 키 생성
+IAM 사용자 생성, AmazonEC2FullAccess 권한 추가, 액세스 키 생성
+![](https://github.com/user-attachments/assets/3e2d1576-b359-4000-88fe-62ed0b209c44)
 
 ```bash
 aws configure
@@ -232,6 +231,7 @@ echo $ALB_URL
 #  페이지 연결이 잘 되는지 확인
 curl -I http://DVWA-ALB-1380857939.us-east-1.elb.amazonaws.com
 ```
+![](https://github.com/user-attachments/assets/c8894d77-c56f-4273-9717-f2eacbb38502)
 
 > 여기까지 실습을 위한 준비는 거의 끝났다
 > 이제 본격적인 실습을 하기전 로그를 보기위한 터미널을 준비하자
@@ -245,3 +245,14 @@ sudo yum install -y htop
 htop
 ```
 ![](https://github.com/user-attachments/assets/2d8216c2-cf0b-496e-9875-d44f9871ba72)
+
+### WebACL 생성
+
+![](https://github.com/user-attachments/assets/503a9acf-aa90-4a8d-bab5-e9649c76ec67)
+![](https://github.com/user-attachments/assets/1611f74e-832d-419f-a644-874a84f505ae)
+![](https://github.com/user-attachments/assets/5a4cb852-cc77-4396-8137-f24655184983)
+![](https://github.com/user-attachments/assets/9c7a12f7-fa68-47e2-8864-e81fd581f481)
+
+## 📌 _Attack_
+
+### 실습해볼 웹 공격의 종류
