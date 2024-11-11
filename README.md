@@ -7,10 +7,10 @@
 
 - VPC 생성
 - 보안 그룹 생성
-- 인스턴스 생성 및 설정
 - 로드 밸런서 생성
+- 인스턴스 생성 및 설정
 
-## VPC 생성
+### VPC 생성
 
 - 이름 : SecLab
 - IPv4 CIDR 블록 : 10.0.0.0/16
@@ -25,7 +25,7 @@
 
 이 설정은 외부 접근이 가능한 퍼블릭 서브넷의 EC2 인스턴스를 위한 간단한 네트워크 구조로, 취약점 분석 및 보안 실습을 위해 최적화 됨. 실습에 필요한 최소한의 구성으로 비용을 절감하면서도 안정적인 환경을 제공
 
-## 보안 그룹 생성
+### 보안 그룹 생성
 
 - DVWA 보안 그룹
     - 이름 : SecLab-DVWA-SG
@@ -62,7 +62,13 @@
 > 추가로 Route 53에서 레코드를 생성하여 해당 레코드로도 DVWA 접속이 가능하게 설정 가능
 ---
 ---
-## DVWA 인스턴스 생성
+
+### 로드 밸런서 생성
+
+
+
+
+### DVWA 인스턴스 생성
 
 - 이름 : DVWA
 - 인스턴스 유형 : t2.micro
@@ -78,7 +84,7 @@
 - 보안 그룹 : SecLab-Attacker-SG
 - 스토리지 : 20GB / gp3
 
-## DVWA 인스턴스 설정
+### DVWA 인스턴스 설정
 
 우선 ssh로 인스턴스에 접속해야 하기 때문에
 새로 생성한 .pem 키가 있는 폴더에서 아래 명령어로 접속을 한다.
@@ -143,10 +149,99 @@ sudo systemctl restart httpd # Apache를 재시작하여 변경 사항을 반영
 
 ![ALB 주소](https://github.com/user-attachments/assets/38ee6424-0ac3-4541-aace-3ee80fa97b31)
 
----
+admin / password로 로그인
 
 ![레코드](https://github.com/user-attachments/assets/7f00ff98-6f61-4aad-b63f-d2aabb02dcb2)
 
 설정 페이지(/setup.php)로 이동 후 Create / Reset Database 버튼을 클릭하여 DVWA 데이터베이스를 초기화
 
 ![](https://github.com/user-attachments/assets/10070653-9cd9-4e70-8b92-2a2f966df99a)
+
+이후 보안 레벨을 Low로 설정
+
+![](https://github.com/user-attachments/assets/609379c0-bd5a-46f4-b773-a0d234993a87)
+
+---
+
+### Attacker 인스턴스 설정
+
+```bash
+# 인스턴스 접속
+ssh -i DVWA.pem ec2-user@퍼블릭 ip
+```
+
+```bash
+# 공격 스크립트나 추가적인 보안 테스트를 위해 Python과 라이브러리 다운
+sudo yum install -y python3 pip
+pip3 install requests bs4
+```
+
+```bash
+# AWS CLI 설정
+curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+unzip awscliv2.zip
+sudo ./aws/install
+```
+
+```bash
+# Attacker 인스턴스가 CLI 기반이기에 curl이나 wget을 통해 페이지에 접속해야 함
+sudo yum install -y curl wget
+```
+
+ALB 인바운드 규칙에 Attacker 퍼블릭 ip 추가
+
+IAM 사용자 생성
+
+AmazonEC2FullAccess 권한 추가
+
+액세스 키 생성
+
+```bash
+aws configure
+```
+
+> AWS Access Key ID: IAM 사용자 생성 시 발급받은 Access Key ID 입력
+> AWS Secret Access Key: 발급받은 Secret Access Key 입력
+> Default region name: us-east-1
+> Default output format: json
+
+```bash
+# 환경 변수 설정
+export ACCOUNT_ID=<YOUR_ACCOUNT_ID>
+export ALB_URL=http://<YOUR_ALB_DNS_NAME>
+```
+
+```bash
+#  설정 스크립트를 다운
+curl 'https://static.us-east-1.prod.workshops.aws/public/e8e9aa48-9a45-4bd8-a364-7ea2b634edb4/static/02/preparation.sh' --output preparation.sh
+# 실행 권한
+chmod 700 preparation.sh
+# 실행
+sh preparation.sh
+# 환경 변수 적용
+source ~/.bash_profile
+```
+
+```bash
+# 아래 명령어를 실행했을때 계정 ID와 ALB-DNS가 출력돼야함
+echo $ACCOUNT_ID
+echo $ALB_URL
+```
+
+```bash
+#  페이지 연결이 잘 되는지 확인
+curl -I http://DVWA-ALB-1380857939.us-east-1.elb.amazonaws.com
+```
+
+> 여기까지 실습을 위한 준비는 거의 끝났다
+> 이제 본격적인 실습을 하기전 로그를 보기위한 터미널을 준비하자
+
+```bash
+# DVWA 모니터링을 위한 로그 확인
+sudo tail -f /var/log/httpd/access_log
+
+# CPU 및 메모리 사용량 확인
+sudo yum install -y htop
+htop
+```
+![](https://github.com/user-attachments/assets/2d8216c2-cf0b-496e-9875-d44f9871ba72)
